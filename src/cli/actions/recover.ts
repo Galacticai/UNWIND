@@ -132,17 +132,7 @@ export const recover = async (options: IUnwindRecoverOptions) => {
   console.log(
     "\n 🧹 Cleaning up unwanted files that come from ntfsundelete..."
   );
-  try {
-    const cmd =
-      // delete files and directories (including ntfsundelete garbage)
-      `find "${options.output}" -name "*:Zone.Identifier" -delete;` + //
-      `find "${options.output}" -name ".fuse_hidden*" -delete;` +
-      `find "${options.output}" -name "*.ntfs-3g-*" -delete;` +
-      `find "${options.output}" -type f -regex ".*\\.[0-9]+$" -delete;`;
-
-    await execute(cmd);
-    console.log(" ✅ Cleanup complete");
-  } catch {
-    console.warn(" ⚠️  Cleanup had errors (this is normal)");
-  }
+  const isCleaned = await recovery.cleanup();
+  if (isCleaned) console.log(" ✅ Cleanup complete");
+  else console.warn(" ⚠️  Cleanup had errors (this is normal)");
 };
