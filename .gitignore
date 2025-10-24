@@ -47,3 +47,7 @@ recovery.json
 recovered/
 restored/
 mft-analysis.json
+
+# Screenshots (keep only in res/screenshots/)
+*.screenshot_*.png
+!res/screenshots/*.png

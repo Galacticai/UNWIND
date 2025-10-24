@@ -7,6 +7,12 @@
 
 Restore deleted data from NTFS filesystems using advanced MFT (Master File Table) analysis.
 
+## 📸 Screenshots
+
+<img src="res/screenshots/running.screenshot_24_10_2025.png" width="400" alt="Recovery in progress">
+<img src="res/screenshots/results.screenshot_24_10_2025.png" width="400" alt="Recovery results">
+<img src="res/screenshots/recovered.screenshot_24_10_2025.png" width="400" alt="Recovered files">
+
 ## ✨ Features
 
 - **Deep MFT Analysis** - Direct filesystem analysis for accurate file recovery
