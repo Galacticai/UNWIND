@@ -1,0 +1,47 @@
+{
+  "name": "unwind",
+  "version": "1.0.0",
+  "description": "restore ntfs deleted data",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "unwind": "./dist/main.js"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "start": "sudo -E /home/galacticai/.nvm/versions/node/v22.15.0/bin/npx tsx src/main.ts",
+    "build": "echo 'Building...' && esbuild src/main.ts --bundle --platform=node --format=esm --outfile=dist/main.js --banner:js='#!/usr/bin/env node' && chmod +x dist/main.js && yarn link",
+    "link": "echo 'Linking...' && npm unlink -g unwind && npm link unwind",
+    "test": "sudo -E /home/galacticai/.nvm/versions/node/v22.15.0/bin/npx tsx src/test.ts"
+  },
+  "keywords": [
+    "ntfs",
+    "ntfsundelete",
+    "restore",
+    "data"
+  ],
+  "author": "galacticai",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "@types/async": "^3.2.25",
+    "@types/lodash": "^4.17.20",
+    "@types/node": "^22.10.5",
+    "eslint": "^9.38.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.46.1"
+  },
+  "dependencies": {
+    "@child_process/promises": "^0.1.2",
+    "async": "^3.2.6",
+    "chalk": "^5.6.2",
+    "commander": "^14.0.1",
+    "lodash": "^4.17.21"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}
