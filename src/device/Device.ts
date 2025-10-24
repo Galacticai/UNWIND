@@ -23,7 +23,7 @@ export class Device {
     return !!mountpoint;
   }
 
-  static InfoDefaultKeys = Object.freeze<DeviceInfoKey[]>([
+  static InfoDefaultKeys = Object.freeze([
     "name",
     "size",
     "type",
@@ -31,7 +31,7 @@ export class Device {
     "label",
     "uuid",
     "mountpoint",
-  ]);
+  ] satisfies DeviceInfoKey[]);
 
   async getInfo<K extends DeviceInfoKey = DeviceInfoKey>(
     ...columns: K[]
