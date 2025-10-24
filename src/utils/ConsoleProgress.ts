@@ -1,3 +1,9 @@
+import type {
+  IBarConfig,
+  IFlexConfig,
+  IBarFlexConfig,
+} from "./ConsoleProgress.types";
+
 export class ConsoleProgress {
   private lastLineCount = 0;
 
@@ -32,6 +38,11 @@ export class ConsoleProgress {
     this.lastLineCount = lines.length;
   }
 
+  static stripFormat(text: string) {
+    // eslint-disable-next-line no-control-regex
+    return text.replace(/\x1b\[[0-9;]*m/g, "");
+  }
+
   static bar({
     ratio,
     filledChar = "█",
@@ -45,7 +56,39 @@ export class ConsoleProgress {
     );
   }
 
-  // static flex({});
+  private static calculateFlexWidth(
+    line: string,
+    indicator: string,
+    maxWidth?: number
+  ): number {
+    const parts = line.split(indicator);
+    const partsWidth = parts.reduce(
+      (acc, part) => acc + this.stripFormat(part).length,
+      0
+    );
+    const availableWidth = this.consoleWidth - partsWidth;
+    return maxWidth ? Math.min(availableWidth, maxWidth) : availableWidth;
+  }
+
+  static flex({
+    flex: text,
+    emptyChar = " ",
+    line,
+    indicator = "{flex}",
+    maxWidth,
+    align = "start",
+  }: IFlexConfig): string {
+    const availableWidth = this.calculateFlexWidth(line, indicator, maxWidth);
+    const textWidth = this.stripFormat(text).length;
+    const emptyCount = Math.max(
+      0,
+      Math.floor((availableWidth - textWidth) / emptyChar.length)
+    );
+    const padding = emptyChar.repeat(emptyCount);
+    const flexed = align === "end" ? padding + text : text + padding;
+    return line.split(indicator).join(flexed);
+  }
+
   static barFlex({
     ratio,
     filledChar,
@@ -54,25 +97,9 @@ export class ConsoleProgress {
     indicator = "{bar}",
     maxWidth,
   }: IBarFlexConfig): string {
-    const parts = line.split(indicator);
-    const partsWidth = parts.reduce(
-      //? ignore invisible formatting
-      // eslint-disable-next-line no-control-regex
-      (acc, part) => acc + part.replace(/\x1b\[[0-9;]*m/g, "").length,
-      0
-    );
-    let barWidth = ConsoleProgress.consoleWidth - partsWidth;
-    if (maxWidth) {
-      barWidth = Math.min(barWidth, maxWidth);
-    }
-
-    const bar = ConsoleProgress.bar({
-      ratio,
-      filledChar,
-      emptyChar,
-      width: barWidth,
-    });
-    return parts.join(bar);
+    const barWidth = this.calculateFlexWidth(line, indicator, maxWidth);
+    const bar = this.bar({ ratio, filledChar, emptyChar, width: barWidth });
+    return line.split(indicator).join(bar);
   }
 
   stop() {
@@ -81,27 +108,3 @@ export class ConsoleProgress {
     this.lastLineCount = 0;
   }
 }
-
-export type IBarConfigBase = {
-  /** value between 0 and 1 */
-  ratio: number;
-  /** default = `█` */
-  filledChar?: string;
-  /** default = `░` */
-  emptyChar?: string;
-};
-export type IBarConfig = IBarConfigBase & {
-  width: number;
-};
-
-export type IBarFlexConfig = IBarConfigBase & {
-  /** line containing the bar indicator to be replaced with a bar */
-  line: string;
-  /**
-   * key to indicate where to place a progress bar
-   * default = `"{bar}"`
-   */
-  indicator?: string;
-  /** default = flex width */
-  maxWidth?: number;
-};

@@ -1,6 +1,5 @@
 import { ELLIPSES, ellipses, formatBytes } from "../../utils/utils";
 import path from "path";
-import { execute } from "../../utils/run";
 import { analyze } from "./analyze";
 import { IUnwindRecoverOptions } from "../types";
 import type {
@@ -87,25 +86,31 @@ export const recover = async (options: IUnwindRecoverOptions) => {
         chalk.gray(` (${formatBytes(current.entry.size)})`) +
         ` ${fileName}`,
       "",
-      " " +
-        " 🟢 " +
-        chalk.green(progress.stats.recovered) +
-        " 🟡 " +
-        chalk.yellow(progress.stats.partiallyRecovered) +
-        " 🟤 " +
-        chalk.gray(progress.stats.skipped) +
-        " 🔴 " +
-        chalk.red(progress.stats.failed) +
-        " " +
-        ` (${formatBytes(progress.stats.totalBytesRecovered)}` +
-        `/${chalk.gray(formatBytes(totalRecoverableSize))})`,
+      ConsoleProgress.flex({
+        indicator: "{flex}",
+        line:
+          "  🟢 " +
+          chalk.green(progress.stats.recovered) +
+          "  🟡 " +
+          chalk.yellow(progress.stats.partiallyRecovered) +
+          "  ⚫️ " +
+          chalk.gray(progress.stats.skipped) +
+          "  🔴 " +
+          chalk.red(progress.stats.failed) +
+          "  {flex}",
+        flex:
+          formatBytes(progress.stats.totalBytesRecovered) +
+          " / " +
+          chalk.gray(formatBytes(totalRecoverableSize)),
+        align: "end",
+      }),
       "",
       ConsoleProgress.barFlex({
         ratio,
         indicator: "{bar}",
         filledChar: "█",
         emptyChar: chalk.gray("░"),
-        line: "  {bar}  " + chalk.bold(percent.toFixed(2) + "%"),
+        line: " {bar}  " + chalk.bold(percent.toFixed(2) + "%"),
       }),
       ""
     );
@@ -121,7 +126,7 @@ export const recover = async (options: IUnwindRecoverOptions) => {
   console.log("\n\n ✅ Recovery complete:");
   console.log(`    🟢 Fully recovered:`, result.stats.recovered);
   console.log(`    🟡 Partially recovered:`, result.stats.partiallyRecovered);
-  console.log(`    🟤 Skipped:`, result.stats.skipped);
+  console.log(`    ⚫️ Skipped:`, result.stats.skipped);
   console.log(`    🔴 Failed:`, result.stats.failed);
   console.log(
     `    Total bytes:`,
