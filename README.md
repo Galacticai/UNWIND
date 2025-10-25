@@ -70,9 +70,8 @@ yarn start analyze --device "/dev/sda1"
 3. **Recovery Filtering**
 4. **File Recovery** - with `ntfsundelete`
 5. **Cleanup** - removes ntfs-3g unwanted artifacts
-••• Please feel free to submit your ideas and contributions •••
 
-••• ••• ••• •••
+---
 
 ## ⚡ Performance Notes
 
@@ -85,3 +84,6 @@ yarn start analyze --device "/dev/sda1"
 - Always backup your data so you don't need recovery utilities.
 - In case of data loss, unmount the affected drive ASAP and don't modify its contents in order to ensure a high success rate in recovery
 - UNWIND does not guarantee 100% validity for the recovered files, since deleted files can be overwritten by new data
+
+---
+**••• Please feel free to submit your ideas and contributions •••**
