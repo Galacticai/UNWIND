@@ -66,10 +66,9 @@ yarn start analyze --device "/dev/sda1"
 
 1. **MFT Analysis**
     - **Entry Parsing** - Extracts file metadata (name, size, parent directory, data runs) from MFT entries
-2. **Tree Reconstruction** - Rebuilds directory structure using parent references defined by MFT entries
-3. **Recovery Filtering**
-4. **File Recovery** - with `ntfsundelete`
-5. **Cleanup** - removes ntfs-3g unwanted artifacts
+    - **Tree Reconstruction** - Rebuilds directory structure using parent references defined by MFT entries
+2. **File Recovery** - with `ntfsundelete`
+3. **Cleanup** - removes ntfs-3g unwanted artifacts
 
 ---
 
