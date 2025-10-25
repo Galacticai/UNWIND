@@ -1,11 +1,10 @@
-# UNWIND
+# UNWIND 
+**_-the time back and recover your deleted files_**
 
 [![License](https://img.shields.io/github/license/Galacticai/UNWIND)](LICENSE)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D22.0.0-brightgreen)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/platform-Linux-lightgrey)](https://www.kernel.org/)
-
-Restore deleted data from NTFS filesystems using advanced MFT (Master File Table) analysis.
 
 ## 📸 Screenshots
 
@@ -13,144 +12,76 @@ Restore deleted data from NTFS filesystems using advanced MFT (Master File Table
 <img src="res/screenshots/results.screenshot_24_10_2025.png" width="400" alt="Recovery results">
 <img src="res/screenshots/recovered.screenshot_24_10_2025.png" width="400" alt="Recovered files">
 
-## ✨ Features
+## 💎 Features
+- Rebuild folder tree structure using MFT references
+  - unlike other apps that just dump everything in 1 folder (easy way)
+- Parallel operations to save time (Restore multiple files at once)
+- Selective recovery with regex
+- Live progress tracking
+ 
+## ✅ Requirements
+- Linux based OS
+  - Tested on Linux 6.17+ with Arch, KDE 6, Wayland
+- Root access
+- node + `npm`/`yarn`
+- `ntfs-3g`
+    - _includes `ntfsundelete` + `ntfsinfo`_
+- NTFS Source device 
+    - _(more may be supported in the future)_
 
-- **Deep MFT Analysis** - Direct filesystem analysis for accurate file recovery
-- **Smart Recovery** - Filters recoverable files based on data availability
-- **Directory Tree Reconstruction** - Maintains original folder structure
-- **Parallel Recovery** - Configurable concurrent file recovery operations
-- **Flexible Filtering** - Regex pattern matching and size-based filtering
-- **Progress Tracking** - Real-time progress indicators for long operations
-- **Conflict Resolution** - Multiple strategies for handling existing files
-
-## 📋 Requirements
-
-- **Linux** (tested on Arch Linux with kernel 6.17+)
-- **Node.js** 22.0.0 or later
-- **Root privileges** (required for direct disk access)
-- **ntfs-3g** package installed (`ntfsinfo`, `ntfsundelete`)
-
-## 🚀 Installation
-
+## 🚀 Example usage
+### Prepare:
+- `git clone https://github.com/Galacticai/UNWIND`
+- `cd UNWIND`
+- `npm install`
+### Run:
 ```bash
-# Install dependencies
-yarn install
-
-# Build the project
-yarn build
-
-# Link globally (optional)
-yarn link
-```
-
-## 📖 Usage
-
-### Analyze Command
-
-Scan an NTFS partition and show statistics:
-
-```bash
-yarn start analyze -d <device>
-```
-
-**Example:**
-```bash
-yarn start analyze -d /dev/sda1
-```
-
-### Recover Command
-
-Recover deleted files from NTFS partition:
-
-```bash
-yarn start recover -d <device> -o <output-path> [options]
-```
-
-**Options:**
-- `-d, --device <path>` - Device path (required, e.g., `/dev/sda1`)
-- `-o, --output <path>` - Output directory for recovered files (required)
-- `-p, --parallel <number>` - Number of parallel recovery operations (default: `100`)
-- `-c, --conflictResolution <strategy>` - How to handle existing files (default: `replace-conflict`)
-  - `clear-all` - Remove all existing files in output before recovery
-  - `skip-conflict` - Skip files that already exist
-  - `replace-conflict` - Overwrite existing files
-- `-r, --regex <pattern>` - Filter file paths by regex pattern
-- `--maxSize <bytes>` - Maximum file size to recover (default: `107374182400` = 100GB)
-- `--minSize <bytes>` - Minimum file size to recover (default: `1` byte)
-- `--unmount` - Unmount device if currently mounted
-
-**Full Example:**
-```bash
-yarn start recover \
-  -d /dev/nvme0n1p1 \
-  -o "./restored" \
-  -p 250 \
-  -c clear-all \
-  -r "Games/.*" \
+yarn start \
+  recover \
+  --device "/dev/sda1" \
+  --output "/mnt/Storage/recovered" \
+  --parallel 250 \ # good for nvme
+  --regex "OnlyThisFolder/.*" \
   --unmount
 ```
-
-This command:
-- Recovers from `/dev/nvme0n1p1`
-- Saves to `./restored` directory
-- Processes 250 files in parallel
-- Clears output directory before recovery
-- Only recovers files matching `Games/.*` pattern
-- Unmounts the device if mounted
-
-## 🛠️ Development
-
+### or just analyze:
 ```bash
-# Run without building
-yarn start <command> [options]
-
-# Build for production
-yarn build
-
-# Run tests
-yarn test
+yarn start analyze --device "/dev/sda1"
 ```
 
-### Debug Mode
-
-Enable detailed error output:
-
-```bash
-yarn start recover -d /dev/sda1 -o ./output --debug
-```
+> ### Command options:
+> - `-d, --device <path>` - Device path (required, e.g., `/dev/sda1`)
+> - `-o, --output <path>` - Output directory for recovered files (required)
+> - `-p, --parallel <number>` - Number of parallel recovery operations (default: `100`)
+> - `-c, --conflictResolution <strategy>` - How to handle existing files (default: `replace-conflict`)
+>   - `clear-all` - Remove all existing files in output before recovery
+>   - `skip-conflict` - Skip files that already exist
+>   - `replace-conflict` - Overwrite existing files
+> - `-r, --regex <pattern>` - Filter file paths by regex pattern
+> - `--maxSize <bytes>` - Maximum file size to recover (default: `107374182400` = 100GB)
+> - `--minSize <bytes>` - Minimum file size to recover (default: `1` byte)
+> - `--unmount` - Unmount device if currently mounted
 
 ## 🔧 How It Works
 
-1. **MFT Analysis** - Reads the Master File Table directly from the NTFS partition
-2. **Entry Parsing** - Extracts file metadata (name, size, parent directory, data runs)
-3. **Tree Reconstruction** - Rebuilds directory structure using parent references
-4. **Recovery Filtering** - Identifies files with recoverable data (non-zero data runs)
-5. **File Recovery** - Uses `ntfsundelete` to extract file contents based on cluster locations
-6. **Cleanup** - Removes incomplete or corrupted recovery artifacts
+1. **MFT Analysis**
+    - **Entry Parsing** - Extracts file metadata (name, size, parent directory, data runs) from MFT entries
+2. **Tree Reconstruction** - Rebuilds directory structure using parent references defined by MFT entries
+3. **Recovery Filtering**
+4. **File Recovery** - with `ntfsundelete`
+5. **Cleanup** - removes ntfs-3g unwanted artifacts
+••• Please feel free to submit your ideas and contributions •••
 
-## ⚠️ Limitations
+••• ••• ••• •••
 
-- **Read-only** - Does not modify the source partition
-- **NTFS only** - Currently supports NTFS filesystems only
-- **Linux only** - Requires Linux-specific tools and direct block device access
-- **No guarantees** - File recovery depends on whether data has been overwritten
+## ⚡ Performance Notes
 
-## 📝 License
+- Increase `--parallel` on fast SSDs for better throughput
+- Use `--regex` to filter specific directories/files instead of recovering everythig
+- Use `--maxSize` to skip large files if disk space is limited
+- Recovery speed depends on disk speed (and fragmentation if mechanical HDD)
 
-GPL-3.0-or-later
-
-## 👤 Author
-
-**galacticai**
-
-## ⚡ Performance Tips
-
-- Increase `-p` (parallel operations) on fast SSDs for better throughput
-- Use `--regex` to filter specific directories/files instead of recovering everything
-- Set appropriate `--maxSize` to skip large files if disk space is limited
-- Large partitions may take several minutes to analyze
-- Recovery speed depends on file fragmentation and disk I/O
-
----
-
-**Note:** Always backup important data regularly. UNWIND is a recovery tool of last resort, not a replacement for proper backup practices.
+## ▫️ General Notes
+- Always backup your data so you don't need recovery utilities.
+- In case of data loss, unmount the affected drive ASAP and don't modify its contents in order to ensure a high success rate in recovery
+- UNWIND does not guarantee 100% validity for the recovered files, since deleted files can be overwritten by new data
