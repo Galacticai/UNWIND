@@ -6,11 +6,13 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
 [![Platform](https://img.shields.io/badge/platform-Linux-lightgrey)](https://www.kernel.org/)
 
-## 📸 Screenshots
+---
 
 <img src="res/screenshots/running.screenshot_24_10_2025.png" width="400" alt="Recovery in progress">
 <img src="res/screenshots/results.screenshot_24_10_2025.png" width="400" alt="Recovery results">
 <img src="res/screenshots/recovered.screenshot_24_10_2025.png" width="400" alt="Recovered files">
+
+---
 
 ## 💎 Features
 - Rebuild folder tree structure using MFT references
