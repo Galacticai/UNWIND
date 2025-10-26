@@ -1,5 +1,5 @@
 # UNWIND 
-**_-the time back and recover your deleted files_**
+**_-the time back and recover your deleted files after reconstructing their folder tree_**
 
 [![License](https://img.shields.io/github/license/Galacticai/UNWIND)](LICENSE)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D22.0.0-brightgreen)](https://nodejs.org/)
